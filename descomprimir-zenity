@@ -1,0 +1,63 @@
+#!/bin/bash
+
+menu (){
+opcion=`zenity --text "Elige una opcion" \
+	--list --column "Numero" --column "Operacion" \
+	"1" "Comprimir" "2" "Descomprimir" "0" "Salir"`
+}
+
+comprimir (){
+	fichero=`zenity --forms --title="Comprimir" \
+	--text="Introduce el fichero que quieres comprimir" \
+	--add-entry="Fichero"`
+	directorio=`zenity --forms --title= "Comprimir" \
+	--text="Introduce el directorio donde se encuentra el fichero" \
+	--add-entry="Directorio"`
+
+        cd $directorio 2>>/tmp/errores.txt
+
+if [ $fichero ]
+	then
+	tar -czvf $fichero.tgz $fichero
+
+else
+zenity --info --text="El $fichero no se puede comprimir"
+fi
+}
+
+descomprimir (){ 
+        fichero=`zenity --forms --title="Descomprimir" \
+	--text="Introduce el fichero que quieres descomprimir" \
+	--add-entry="Fichero"`
+        directorio=`zenity --forms --title="Descomprimir" \
+	--text="Introduce el directorio donde quieres descomprimir el fichero" \
+	--add-entry="Directorio"`
+      cd $directorio 2>>/tmp/errores.txt
+
+if [ $fichero ]
+	then
+	tar -xzvf $fichero
+else
+zenity --info --text "El $fichero no se puede descomprimir"
+fi
+}
+
+opciones (){
+case $opcion in
+	1)comprimir;;
+	2)descomprimir;;
+	0)exit 0;;
+esac
+}
+
+while true
+do
+
+ menu
+	if [ $opcion -le 2 ] && [ $opcion -ge 0 ] 
+	then
+	opciones
+	else  
+	zenity --info --text "Elige una opcion de las anteriores"
+	fi
+done
